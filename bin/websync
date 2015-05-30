@@ -126,13 +126,16 @@ TO=${TO:-"/org/www.debian.org/www"}
 PROGRAM=${PROGRAM:-"${NAME}-$(hostname -s)"}
 
 # Where to send mails about mirroring to?
-if [ "x$(hostname -d)x" != "xdebian.orgx" ]; then
-    # We are not on a debian.org host
-    MAILTO=${MAILTO:-"root"}
-else
-    # Yay, on a .debian.org host
-    MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
-fi
+case "$(hostname -f)" in
+    *.debian.org)
+        # Yay, on a .debian.org host
+        MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
+        ;;
+    *)
+        # We are not on a debian.org host
+        MAILTO=${MAILTO:-"root"}
+        ;;
+esac
 # Want errors only or every log?
 ERRORSONLY=${ERRORSONLY:-"true"}
 # Want full logs, ie. including the rsync one?

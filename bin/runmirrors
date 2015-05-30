@@ -122,13 +122,16 @@ KEYFILE=${KEYFILE:-".ssh/pushmirror"}
 savelog "${LOG}" > /dev/null
 
 # where to send mails to
-if [ "x$(hostname -d)x" != "xdebian.orgx" ]; then
-    # We are not on a debian.org host
-    MAILTO=${MAILTO:-"root"}
-else
-    # Yay, on a .debian.org host
-    MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
-fi
+case "$(hostname -f)" in
+    *.debian.org)
+        # Yay, on a .debian.org host
+        MAILTO=${MAILTO:-"mirrorlogs@debian.org"}
+        ;;
+    *)
+        # We are not on a debian.org host
+        MAILTO=${MAILTO:-"root"}
+        ;;
+esac
 
 if ! [ -f "${BASEDIR}/${KEYFILE}" ]; then
     error "SSH Key ${BASEDIR}/${KEYFILE} does not exist" >> "${LOG}"
